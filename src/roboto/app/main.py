@@ -155,6 +155,7 @@ def run_command_msg(response_msg):
     for run_function, re_match in all_cmds.items():
         logging.info(f"Message received: {msg}")
         if re_match.match(msg):
+            send_comment(response_msg["issue_url"], "Working on your request...")
             run_function(response_msg)
             break
     else:
@@ -191,8 +192,6 @@ def check_notifications():
         response = requests.get(mention["subject"]["latest_comment_url"])
         response.raise_for_status()
         msg = response.json()
-
-        send_comment(msg["issue_url"], "Working on your request...")
 
         run_command_msg(msg)
         requests.put(
