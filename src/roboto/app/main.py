@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 import re
 import subprocess
@@ -152,6 +153,7 @@ def run_command_msg(response_msg):
         show_requirements: re.compile(r"@conda\-grayskull\s+show\s+requirement[s]*")
     }
     for run_function, re_match in all_cmds.items():
+        logging.info(f"Message received: {msg}")
         if re_match.match(msg):
             run_function(response_msg)
             break
@@ -165,6 +167,7 @@ def run_command_msg(response_msg):
 @app.on_event("startup")
 @repeat_every(seconds=CHECK_NOTIFICATIONS_INTERVAL)
 def check_notifications():
+    logging.info("Checking notifications...")
     response = requests.get(
         "https://api.github.com/notifications",
         params={"reason": "mention", "unread": True},
@@ -183,6 +186,7 @@ def check_notifications():
         else:
             last_update = mention_updated_at
 
+        logging.info(f"Comment url: {mention['subject']['latest_comment_url']}")
         response = requests.get(mention["subject"]["latest_comment_url"])
         response.raise_for_status()
         msg = response.json()
