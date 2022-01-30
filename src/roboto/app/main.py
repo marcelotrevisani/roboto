@@ -158,10 +158,11 @@ def run_command_msg(response_msg):
             run_function(response_msg)
             break
     else:
-        send_comment(
-            response_msg["issue_url"],
-            "Command not recognized, please inform a valid command.",
-        )
+        if msg and "@conda-grayskull" in msg:
+            send_comment(
+                response_msg["issue_url"],
+                "Command not recognized, please inform a valid command.",
+            )
 
 
 @app.on_event("startup")
@@ -194,7 +195,6 @@ def check_notifications():
         send_comment(msg["issue_url"], "Working on your request...")
 
         run_command_msg(msg)
-    if all_mentions:
         requests.put(
             "https://api.github.com/notifications",
             headers={"Authorization": f"token {GH_TOKEN}"},
