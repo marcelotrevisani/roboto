@@ -150,11 +150,13 @@ def show_requirements(response_msg: dict):
 def run_command_msg(response_msg):
     msg = response_msg["body"]
     all_cmds = {
-        show_requirements: re.compile(r"@conda\-grayskull\s+show\s+requirement[s]*")
+        show_requirements: re.compile(
+            r"@conda\-grayskull\s+show\s+requirement[s]*", re.IGNORECASE
+        )
     }
     for run_function, re_match in all_cmds.items():
         logging.info(f"Message received: {msg}")
-        if re_match.match(msg):
+        if re_match.search(msg):
             send_comment(response_msg["issue_url"], "Working on your request...")
             run_function(response_msg)
             break
